@@ -9,12 +9,14 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as HelloRouteImport } from './routes/hello'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DemoIndexRouteImport } from './routes/demo/index'
 import { Route as DemoTanstackQueryRouteImport } from './routes/demo/tanstack-query'
 import { Route as AuthenticatedUserlistRouteImport } from './routes/_authenticated/userlist'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
+import { Route as AuthenticatedAboutformRouteImport } from './routes/_authenticated/aboutform'
 import { Route as authRegisterRouteImport } from './routes/(auth)/register'
 import { Route as authLoginRouteImport } from './routes/(auth)/login'
 import { Route as DemoFormIndexRouteImport } from './routes/demo/form/index'
@@ -22,6 +24,11 @@ import { Route as DemoTableTableRouteImport } from './routes/demo/table/table'
 import { Route as DemoFormSimpleRouteImport } from './routes/demo/form/simple'
 import { Route as DemoFormAddressRouteImport } from './routes/demo/form/address'
 
+const HelloRoute = HelloRouteImport.update({
+  id: '/hello',
+  path: '/hello',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedRoute = AuthenticatedRouteImport.update({
   id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
@@ -49,6 +56,11 @@ const AuthenticatedUserlistRoute = AuthenticatedUserlistRouteImport.update({
 const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedAboutformRoute = AuthenticatedAboutformRouteImport.update({
+  id: '/aboutform',
+  path: '/aboutform',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const authRegisterRoute = authRegisterRouteImport.update({
@@ -84,8 +96,10 @@ const DemoFormAddressRoute = DemoFormAddressRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/hello': typeof HelloRoute
   '/login': typeof authLoginRoute
   '/register': typeof authRegisterRoute
+  '/aboutform': typeof AuthenticatedAboutformRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/userlist': typeof AuthenticatedUserlistRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
@@ -97,8 +111,10 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/hello': typeof HelloRoute
   '/login': typeof authLoginRoute
   '/register': typeof authRegisterRoute
+  '/aboutform': typeof AuthenticatedAboutformRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/userlist': typeof AuthenticatedUserlistRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
@@ -112,8 +128,10 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
+  '/hello': typeof HelloRoute
   '/(auth)/login': typeof authLoginRoute
   '/(auth)/register': typeof authRegisterRoute
+  '/_authenticated/aboutform': typeof AuthenticatedAboutformRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/userlist': typeof AuthenticatedUserlistRoute
   '/demo/tanstack-query': typeof DemoTanstackQueryRoute
@@ -127,8 +145,10 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/hello'
     | '/login'
     | '/register'
+    | '/aboutform'
     | '/dashboard'
     | '/userlist'
     | '/demo/tanstack-query'
@@ -140,8 +160,10 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/hello'
     | '/login'
     | '/register'
+    | '/aboutform'
     | '/dashboard'
     | '/userlist'
     | '/demo/tanstack-query'
@@ -154,8 +176,10 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_authenticated'
+    | '/hello'
     | '/(auth)/login'
     | '/(auth)/register'
+    | '/_authenticated/aboutform'
     | '/_authenticated/dashboard'
     | '/_authenticated/userlist'
     | '/demo/tanstack-query'
@@ -169,6 +193,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
+  HelloRoute: typeof HelloRoute
   authLoginRoute: typeof authLoginRoute
   authRegisterRoute: typeof authRegisterRoute
   DemoTanstackQueryRoute: typeof DemoTanstackQueryRoute
@@ -181,6 +206,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/hello': {
+      id: '/hello'
+      path: '/hello'
+      fullPath: '/hello'
+      preLoaderRoute: typeof HelloRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated': {
       id: '/_authenticated'
       path: ''
@@ -221,6 +253,13 @@ declare module '@tanstack/react-router' {
       path: '/dashboard'
       fullPath: '/dashboard'
       preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/aboutform': {
+      id: '/_authenticated/aboutform'
+      path: '/aboutform'
+      fullPath: '/aboutform'
+      preLoaderRoute: typeof AuthenticatedAboutformRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/(auth)/register': {
@@ -269,11 +308,13 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteChildren {
+  AuthenticatedAboutformRoute: typeof AuthenticatedAboutformRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedUserlistRoute: typeof AuthenticatedUserlistRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedAboutformRoute: AuthenticatedAboutformRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedUserlistRoute: AuthenticatedUserlistRoute,
 }
@@ -285,6 +326,7 @@ const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
+  HelloRoute: HelloRoute,
   authLoginRoute: authLoginRoute,
   authRegisterRoute: authRegisterRoute,
   DemoTanstackQueryRoute: DemoTanstackQueryRoute,
